@@ -62,8 +62,8 @@ public class MainGameLoop {
         final double[] x = {0};
         final double[] z = {0};
         new Thread(() ->{
-            for (x[0] = player.getMinXValue() - (Chunk.getCHUNK_LENGTH() * 500); x[0] < player.getMinXValue() + (Chunk.getCHUNK_LENGTH() * 500); x[0] += Chunk.getCHUNK_LENGTH()) {
-                for (z[0] = player.getMinZValue() - (Chunk.getCHUNK_WIDTH() * 500); z[0] < player.getMinZValue() + (Chunk.getCHUNK_WIDTH() * 500); z[0] += Chunk.getCHUNK_WIDTH()) {
+            for (x[0] = player.getMinXValue() - (Chunk.getCHUNK_LENGTH() * 5); x[0] < player.getMinXValue() + (Chunk.getCHUNK_LENGTH() * 5); x[0] += Chunk.getCHUNK_LENGTH()) {
+                for (z[0] = player.getMinZValue() - (Chunk.getCHUNK_WIDTH() * 5); z[0] < player.getMinZValue() + (Chunk.getCHUNK_WIDTH() * 5); z[0] += Chunk.getCHUNK_WIDTH()) {
                     Chunk chunk = World.getChunkAt((int) x[0], (int) z[0]);
 
                     if (chunk != null) {
