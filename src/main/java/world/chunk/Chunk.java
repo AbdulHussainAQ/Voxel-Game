@@ -27,7 +27,7 @@ public class Chunk implements Serializable{
     @Getter
     private static final int CHUNK_WIDTH = 16;
     @Getter
-    private static final int CHUNK_HEIGHT = 256;
+    private static final int CHUNK_HEIGHT = 16;
 
     @Getter
     public final int MIN_X;
@@ -43,9 +43,6 @@ public class Chunk implements Serializable{
 
     @Getter
     private boolean isLazy;
-
-
-    public static int instanceCount = 0;
 
     public boolean blocksComputed;
 
@@ -64,7 +61,6 @@ public class Chunk implements Serializable{
         chunkUUID = UUID.randomUUID();
         maxBlockHeight = 0;
         blocksComputed = false;
-        instanceCount++;
         isRendered = false;
         this.noise = noise;
         this.isLazy = true;
@@ -142,7 +138,19 @@ public class Chunk implements Serializable{
     }
 
 
-    public void computeBlocks() {
+    public int getHeight(int x, int z){
+        x = Math.min(x - MIN_X, 15);
+        z = Math.min(z - MIN_Z, 15);
+        int height = 0;
+        for(int y = 0;y<CHUNK_HEIGHT;y++){
+            if(blocksInChunk[x][y][z] != 0){
+                height = y;
+            }
+        }
+        return height;
+    }
+
+    public synchronized void computeBlocks() {
 
         blocksInChunk = new int[CHUNK_LENGTH][CHUNK_HEIGHT + 1][CHUNK_WIDTH];
 
@@ -155,7 +163,7 @@ public class Chunk implements Serializable{
 
                 for (int z = 0; z < CHUNK_WIDTH; z++) {
 
-                    int TERRAIN_HEIGHT = (Math.max((int) (10 * noise.noise((MIN_X + x), (MIN_Z + z))), 1));
+                    int TERRAIN_HEIGHT = (int) Math.max(1, (CHUNK_HEIGHT*noise.noise(MIN_X+x, MIN_Z+z)));
 
                     /*
                     if(y >= TERRAIN_HEIGHT -1 && x == CHUNK_LENGTH / 2 && z == CHUNK_WIDTH / 2){
@@ -180,7 +188,7 @@ public class Chunk implements Serializable{
     }
 
 
-    public void updateChunk() {
+    public synchronized void updateChunk() {
 
         long start = System.nanoTime();
 
@@ -307,7 +315,7 @@ public class Chunk implements Serializable{
 
     }
 
-    public BlockRenderer getBlockRenderer() {
+    public synchronized BlockRenderer getBlockRenderer() {
         return blockRenderer;
     }
 

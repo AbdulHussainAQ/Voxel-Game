@@ -9,7 +9,7 @@ public class DisplayManager {
 	private static final int WIDTH = 1280;
 	private static final int HEIGHT = 720;
 
-	public static final int FPS_CAP = 60;
+	public static final int FPS_CAP = Integer.MAX_VALUE;
 
 	private static long lastFrameTime;
 	private static float delta;
@@ -23,8 +23,7 @@ public class DisplayManager {
 			Display.setDisplayMode(new DisplayMode(WIDTH,HEIGHT));
 			Display.create(new PixelFormat(), attribs);
 			Display.setTitle("Minecraft");
-			Display.setVSyncEnabled(true);
-			GL11.glEnable(GL13.GL_MULTISAMPLE);
+
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}

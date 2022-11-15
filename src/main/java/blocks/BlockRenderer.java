@@ -85,7 +85,7 @@ public class BlockRenderer implements Serializable {
             0.5f,-0.5f,0f,
             0.5f,0.5f,0f,
     };
-    private static final float[] BACKFACE = new float[]{
+    private static  final float[] BACKFACE = new float[]{
             -0.5f,0.5f,0f,
             -0.5f,-0.5f,0f,
             -0.5f,-0.5f,1f,
@@ -93,7 +93,7 @@ public class BlockRenderer implements Serializable {
     };
 
 
-    private static int faces;
+    private int faces;
 
     int positionsLength;
     public BlockRenderer(int minX, int minZ,Chunk chunk){
@@ -105,7 +105,7 @@ public class BlockRenderer implements Serializable {
     }
 
 
-    public void render(Block block, Block.FACE @NotNull [] faces){
+    public synchronized void render(Block block, Block.FACE @NotNull [] faces){
         int integer;
         for(Block.FACE face : faces){
             if(face == null)continue;
@@ -174,7 +174,7 @@ public class BlockRenderer implements Serializable {
     @Getter
     public int[] indices;
 
-    public void computeMesh(){
+    public synchronized void computeMesh(){
 
         positions = new float[positionsLength];
         int[] index = {0, 0, 0};
@@ -235,17 +235,12 @@ public class BlockRenderer implements Serializable {
     private float[] textureCoords;
 
 
-    private static int done = 0;
 
-    private static long s;
 
-    public void renderChunk(){
+
+    public synchronized void renderChunk(){
         Location location = new Location(minX,0,minZ);
-        System.out.println("MINX: "+minX);
-        System.out.println("X: "+location.getX());
-        System.out.println("MINZ: "+minX);
-        System.out.println("Z: "+location.getZ());
-        ChunkEntity entity = new ChunkEntity(texturedModel, random.nextInt(3), location, 0,0,0,Block.getBLOCK_WIDTH(), chunk);
+        ChunkEntity entity = new ChunkEntity(texturedModel, 1, location, 0,0,0,Block.getBLOCK_WIDTH(), chunk);
         chunk.setEntity(entity);
         World.renderChunk(entity);
 
@@ -254,7 +249,7 @@ public class BlockRenderer implements Serializable {
 
 
     @Contract(pure = true)
-    public float @NotNull [] textureCoords(int num){
+    public synchronized float @NotNull [] textureCoords(int num){
         float[] coords = new float[8*num];
         for(int i = 0; i< coords.length;){
             for (float textureCoord : TEXTURECOORDS) {
@@ -269,7 +264,7 @@ public class BlockRenderer implements Serializable {
 
 
     @Contract(mutates = "this")
-    public int @NotNull [] generateIndices(int num){
+    public synchronized int @NotNull [] generateIndices(int num){
 
         int[] nums = new int[num*6];
 
@@ -278,7 +273,6 @@ public class BlockRenderer implements Serializable {
         for(int i = 1; i<=num;i++){
 
             int t = (4 * i) -3;
-
             nums[index] = (t-1);
             index++;
             nums[index] = (t);

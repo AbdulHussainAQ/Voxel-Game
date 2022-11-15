@@ -4,10 +4,7 @@ import entities.Entity;
 import models.RawModel;
 import models.TexturedModel;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.*;
 import org.lwjgl.util.vector.Matrix4f;
 import shaders.StaticShader;
 import textures.ModelTexture;
@@ -28,11 +25,12 @@ public class Renderer {
     }
 
     public void render(@NotNull Map<TexturedModel, @NotNull List<Entity>> entities) {
-        for (@NotNull TexturedModel model : entities.keySet()) {
+        for (TexturedModel model : entities.keySet()) {
             prepareTexturedModel(model);
             List<Entity> batch = entities.get(model);
             for (Entity entity : batch) {
                 prepareInstance(entity);
+
                 GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getVertexCount(),
                         GL11.GL_UNSIGNED_INT, 0);
             }
@@ -50,17 +48,13 @@ public class Renderer {
         GL20.glEnableVertexAttribArray(2);
         ModelTexture texture = model.getTexture();
         shader.loadNumberOfRows(texture.getNumberOfRows());
-        if (texture.isHasTransparency()) {
-            MasterRenderer.disableCulling();
-        }
-        shader.loadFakeLightingVariable(texture.isUseFakeLighting());
-        shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getID());
+
     }
 
     private void unbindTexturedModel() {
-        MasterRenderer.enableCulling();
+
         GL20.glDisableVertexAttribArray(0);
         GL20.glDisableVertexAttribArray(1);
         GL20.glDisableVertexAttribArray(2);

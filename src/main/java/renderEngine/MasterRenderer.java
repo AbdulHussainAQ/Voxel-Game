@@ -10,16 +10,12 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector4f;
 import shaders.StaticShader;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.*;
 
 
 public class MasterRenderer {
 
-	private static final float FOV = 50;
+	private static final float FOV = 110;
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 500f;
 
@@ -55,24 +51,16 @@ public class MasterRenderer {
 		return this.projectionMatrix;
 	}
 
-	public void renderScene(CopyOnWriteArrayList<Entity> entities, List<Entity> normalEntities, List<Light> lights,
-							Camera camera, Vector4f clipPlane) {
-
-		for (Entity entity : entities) {
-			processEntity(entity);
-		}
-		for(Entity entity : normalEntities){
-			processNormalMapEntity(entity);
-		}
-		render(lights, camera, clipPlane);
+	public void renderScene(List<Light> lights,
+							Camera camera) {
+		render(lights, camera);
 	}
 
-	public void render(List<Light> lights, Camera camera, Vector4f clipPlane) {
+	public void render(List<Light> lights, Camera camera) {
 		prepare();
 
 		shader.start();
-		shader.loadClipPlane(clipPlane);
-		shader.loadSkyColour(RED, GREEN, BLUE);
+
 		shader.loadLights(lights);
 		shader.loadViewMatrix(camera);
 		renderer.render(entities);
@@ -92,28 +80,20 @@ public class MasterRenderer {
 
 
 	public void processEntity(Entity entity) {
+
 		TexturedModel entityModel = entity.getModel();
-		List<Entity> batch = entities.get(entityModel);
+		LinkedList<Entity> batch = (LinkedList<Entity>) entities.get(entityModel);
 		if (batch != null) {
 			batch.add(entity);
 		} else {
-			List<Entity> newBatch = new ArrayList<Entity>();
+			LinkedList<Entity> newBatch = new LinkedList<>();
 			newBatch.add(entity);
 			entities.put(entityModel, newBatch);
 		}
+
 	}
 
-	public void processNormalMapEntity(Entity entity) {
-		TexturedModel entityModel = entity.getModel();
-		List<Entity> batch = normalMapEntities.get(entityModel);
-		if (batch != null) {
-			batch.add(entity);
-		} else {
-			List<Entity> newBatch = new ArrayList<Entity>();
-			newBatch.add(entity);
-			normalMapEntities.put(entityModel, newBatch);
-		}
-	}
+
 
 	public void cleanUp() {
 		shader.cleanUp();

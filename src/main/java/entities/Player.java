@@ -18,10 +18,11 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Player extends Entity {
 
-    //private final float RUN_SPEED = 4.317f;
-    private final float RUN_SPEED = 20f;
+    private final float RUN_SPEED = 4.317f; //Walk speed
+    //private final float RUN_SPEED = 10.8f; //Fly speed
+    //private final float RUN_SPEED = 20f;
     private final float GRAVITY = 0;
-    private final float JUMP_POWER = 100;
+    private final float JUMP_POWER = RUN_SPEED;
 
     private boolean togglePolygon = false;
     private long cooldown = 0L;
@@ -76,7 +77,7 @@ public class Player extends Entity {
             currentChunk = getCurrentChunk();
         }
         Location location = this.getPosition();
-        Display.setTitle("X: "+location.getX()+" Y: "+location.getY()+" Z: "+location.getZ());
+        //Display.setTitle("X: "+location.getX()+" Y: "+location.getY()+" Z: "+location.getZ());
 
 
         super.increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);

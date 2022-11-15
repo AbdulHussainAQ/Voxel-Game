@@ -60,8 +60,7 @@ public class Loader{
         }
         int id = vaos.get(chunk);
         GL30.glDeleteVertexArrays(id);
-        System.out.println("VAOS: "+vaos.size());
-        System.out.println("VBOS: "+vbos.size());
+
 
         vaos.remove(chunk);
         vbos.remove(chunk);
@@ -159,7 +158,7 @@ public class Loader{
 
     protected void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data, List<Integer> vbos) {
         int vboID = GL15.glGenBuffers();
-        System.out.println("ID: "+vboID);
+
         vbos.add(vboID);
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
         FloatBuffer buffer = storeDataInFloatBuffer(data);
