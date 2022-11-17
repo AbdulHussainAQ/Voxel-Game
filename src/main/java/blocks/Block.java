@@ -10,9 +10,7 @@ public class Block implements Serializable {
     private final Location location;
 
     @Getter
-    private static final int BLOCK_WIDTH = 1;
-
-
+    private static final float BLOCK_WIDTH = 1f;
     public int[] indices;
 
     public float[] textureCoords;

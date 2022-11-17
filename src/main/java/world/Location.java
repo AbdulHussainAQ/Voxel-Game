@@ -2,6 +2,7 @@ package world;
 
 import blocks.Block;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.util.vector.Vector;
 import org.lwjgl.util.vector.Vector3f;
 import world.chunk.Chunk;
 
@@ -20,8 +21,8 @@ public class Location implements Cloneable, Serializable {
     public float z;
 
     public Location(float x, float y, float z) {
-        this.x = x * BLOCK_WIDTH;
-        this.y = y - BLOCK_WIDTH;
+        this.x = x;
+        this.y = y;
         this.z = z ;
 
     }
@@ -64,11 +65,9 @@ public class Location implements Cloneable, Serializable {
     }
 
     public Location clone() {
-        try {
-            return (Location) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
+
+        return new Location(x,y,z);
+
 
     }
 
@@ -131,6 +130,15 @@ public class Location implements Cloneable, Serializable {
         this.y -= y;
         this.z -= z;
         return this;
+    }
+
+    public Vector3f getDirection(float yaw, float pitch) {
+        Vector3f vector = new Vector3f();
+        vector.setY((float) -Math.sin(Math.toRadians(pitch)));
+        double xz = Math.cos(Math.toRadians(pitch));
+        vector.setX((float) (xz * Math.sin(Math.toRadians(yaw))));
+        vector.setZ((float) (xz * Math.cos(Math.toRadians(yaw))));
+        return vector;
     }
 
 

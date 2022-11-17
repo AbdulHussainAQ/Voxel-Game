@@ -26,6 +26,7 @@ public class Camera {
         calculateZoom();
         calculatePitch();
         calculateAngleAroundPlayer();
+        checkClick();
         float horizontalDistance = calculateHorizontalDistance();
         float verticalDistance = calculateVerticalDistance();
         calculateCameraPosition(horizontalDistance, verticalDistance);
@@ -95,6 +96,19 @@ public class Camera {
         angleAroundPlayer -= angleChange;
         player.increaseRotation(0, -angleChange, 0);
 
+    }
+
+
+
+    private long lastClicked = System.currentTimeMillis();
+
+    private void checkClick(){
+
+        if(Mouse.isButtonDown(0) && System.currentTimeMillis() - lastClicked > 100){
+
+            player.breakBlock();
+            lastClicked = System.currentTimeMillis();
+        }
     }
 
 

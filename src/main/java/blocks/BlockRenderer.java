@@ -49,10 +49,10 @@ public class BlockRenderer implements Serializable {
     static float[][][] pos = new float[Chunk.getCHUNK_LENGTH()*Chunk.getCHUNK_WIDTH()*Chunk.getCHUNK_HEIGHT()][6][13];
 
     private static final float[] TEXTURECOORDS = new float[]{
-            0,0,
-            0,1,
-            1,1,
-            1,0,
+            0.1f,0.1f,
+            0.1f,0.7f,
+            0.7f,0.7f,
+            0.7f,0.1f,
     };
 
     private static final float[] TOPFACE = new float[]{
@@ -103,6 +103,8 @@ public class BlockRenderer implements Serializable {
         positionsLength = 0;
         
     }
+
+
 
 
     public synchronized void render(Block block, Block.FACE @NotNull [] faces){
@@ -240,7 +242,7 @@ public class BlockRenderer implements Serializable {
 
     public synchronized void renderChunk(){
         Location location = new Location(minX,0,minZ);
-        ChunkEntity entity = new ChunkEntity(texturedModel, 1, location, 0,0,0,Block.getBLOCK_WIDTH(), chunk);
+        ChunkEntity entity = new ChunkEntity(texturedModel, 321, location, 0,0,0,Block.getBLOCK_WIDTH(), chunk);
         chunk.setEntity(entity);
         World.renderChunk(entity);
 

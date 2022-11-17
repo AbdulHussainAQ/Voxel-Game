@@ -12,6 +12,7 @@ import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
 import textures.ModelTexture;
+import toolbox.MousePicker;
 import world.Location;
 import world.World;
 import world.chunk.Chunk;
@@ -31,7 +32,7 @@ public class MainGameLoop {
         DisplayManager.createDisplay();
         Loader loader = new Loader();
         modelTexture = new ModelTexture(loader.loadTexture("atlas"));
-        modelTexture.setNumberOfRows(16);
+        modelTexture.setNumberOfRows(32);
 
 
         RawModelPool rawModelPool = new RawModelPool(loader);
@@ -52,6 +53,7 @@ public class MainGameLoop {
 
         Player player = new Player(null, new Location(5, 3, 5), 0, 0, 0, 1f);
         World world = new World(player, chunks, rawModelPool, loader);
+
 
         final double[] x = {0};
         final double[] z = {0};
@@ -83,7 +85,8 @@ public class MainGameLoop {
         }).start();
 
         Camera camera = new Camera(player);
-
+        player.setCamera(camera);
+        MousePicker mousePicker = new MousePicker(camera, renderer.getProjectionMatrix());
         int num = 0;
         long lastTime =System.currentTimeMillis();
         while (!Display.isCloseRequested()) {
@@ -92,6 +95,7 @@ public class MainGameLoop {
 
             player.move();
             camera.move();
+            mousePicker.update();
 
             for(ChunkEntity c: chunks){
                 if(c == null)continue;
@@ -101,7 +105,7 @@ public class MainGameLoop {
             world.update();
             num++;
             if(System.currentTimeMillis() - lastTime >= 1000){
-                Display.setTitle("FPS: "+num);
+                //Display.setTitle("FPS: "+num);
                 lastTime = System.currentTimeMillis();
                 num = 0;
 

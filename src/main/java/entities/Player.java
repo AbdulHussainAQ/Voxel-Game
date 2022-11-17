@@ -1,11 +1,14 @@
 package entities;
 
 import blocks.Block;
+import lombok.Getter;
+import lombok.Setter;
 import models.TexturedModel;
 import org.ehcache.sizeof.SizeOf;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+
 import org.lwjgl.util.vector.Vector3f;
 import renderEngine.DisplayManager;
 import world.Location;
@@ -22,6 +25,9 @@ public class Player extends Entity {
     //private final float RUN_SPEED = 10.8f; //Fly speed
     //private final float RUN_SPEED = 20f;
     private final float GRAVITY = 0;
+
+    private final int REACHDISTANCE = 16;
+
     private final float JUMP_POWER = RUN_SPEED;
 
     private boolean togglePolygon = false;
@@ -38,6 +44,9 @@ public class Player extends Entity {
     private boolean horizontal = false;
 
     private Chunk currentChunk;
+
+    @Setter @Getter
+    private Camera camera;
 
     public Player(TexturedModel model, Location position, float rotX, float rotY, float rotZ,
                   float scale) {
@@ -77,7 +86,7 @@ public class Player extends Entity {
             currentChunk = getCurrentChunk();
         }
         Location location = this.getPosition();
-        //Display.setTitle("X: "+location.getX()+" Y: "+location.getY()+" Z: "+location.getZ());
+        Display.setTitle("X: "+location.getX()+" Y: "+location.getY()+" Z: "+location.getZ()+" Pitch: "+camera.getPitch()+" Yaw: "+camera.getYaw());
 
 
         super.increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
@@ -189,4 +198,42 @@ public class Player extends Entity {
         return 16*(Math.floor(location.z/16f));
     }
 
+    public Location getEyeLocation(){
+
+        Location loc = this.getPosition().clone();
+        loc.setY(loc.getY() + 0.1f);
+        return loc;
+
+    }
+
+    public Location rayTrace(double maxDistance){
+        Location eyeLocation = this.getEyeLocation();
+        Vector3f direction = eyeLocation.getDirection(this.camera.getYaw(), this.camera.getPitch());
+        Vector3f directionNormalized = (Vector3f) direction.normalise();
+        Location finalLoc = eyeLocation.clone();
+
+        double distance = 0;
+
+
+        while (distance < maxDistance){
+            finalLoc.add(directionNormalized);
+            System.out.println("LOCATION: "+finalLoc.clone().toVector());
+            distance++;
+        }
+
+        return finalLoc;
+
+
+
+    }
+
+    public void breakBlock() {
+
+        Location location = rayTrace(REACHDISTANCE);
+        Chunk chunk = World.getChunk(location.x, location.z);
+        if(chunk != null){
+            System.out.println((World.unloadChunk(chunk.getEntity()) ? "Chunk unloaded" : "NOTHING HAPPENED"));
+        }
+
+    }
 }
