@@ -4,9 +4,12 @@ import entities.Camera;
 import entities.ChunkEntity;
 import entities.Light;
 import entities.Player;
+import guis.GuiRenderer;
+import guis.GuiTexture;
 import lombok.Getter;
 import models.RawModelPool;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
@@ -25,7 +28,7 @@ public class MainGameLoop {
     @Getter
     private static ModelTexture modelTexture;
     @Getter
-    private static final int RENDERDISTANCE = 16;
+    private static final int RENDERDISTANCE = 8;
 
     public static void main(String[] args) {
 
@@ -86,7 +89,11 @@ public class MainGameLoop {
 
         Camera camera = new Camera(player);
         player.setCamera(camera);
-        MousePicker mousePicker = new MousePicker(camera, renderer.getProjectionMatrix());
+
+        GuiTexture crosshair = new GuiTexture(loader.loadTexture("crosshair"), new Vector2f(Display.getHeight()/2f, Display.getWidth()/2f),new Vector2f(1000,1000));
+        GuiRenderer guiRenderer = new GuiRenderer(loader);
+
+
         int num = 0;
         long lastTime =System.currentTimeMillis();
         while (!Display.isCloseRequested()) {
@@ -95,7 +102,8 @@ public class MainGameLoop {
 
             player.move();
             camera.move();
-            mousePicker.update();
+            guiRenderer.render(List.of(crosshair));
+
 
             for(ChunkEntity c: chunks){
                 if(c == null)continue;
@@ -115,6 +123,7 @@ public class MainGameLoop {
 
 
             renderer.renderScene(lights, camera);
+
 
             DisplayManager.updateDisplay();
         }

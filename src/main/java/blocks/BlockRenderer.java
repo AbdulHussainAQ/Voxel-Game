@@ -13,7 +13,7 @@ import world.World;
 import world.chunk.Chunk;
 
 import java.io.Serializable;
-import java.util.Random;
+
 
 public class BlockRenderer implements Serializable {
 
@@ -38,8 +38,6 @@ public class BlockRenderer implements Serializable {
     private TexturedModel texturedModel;
 
     private final Chunk chunk;
-
-    private static final Random random = new Random();
 
     int index = 0;
 

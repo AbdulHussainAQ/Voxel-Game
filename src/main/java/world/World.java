@@ -7,19 +7,13 @@ import entities.Player;
 import lombok.Getter;
 import models.RawModelPool;
 import models.TexturedModel;
-import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import world.chunk.Chunk;
 import world.worldgen.Noise;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
 public class World {
 
@@ -60,6 +54,8 @@ public class World {
 
     private BlockComputer blockComputer;
 
+    private ChunkUnloader chunkUnloader;
+
     private ChunkComputer chunkComputer;
     private ChunkSaver chunkSaver;
     private ChunkLoadingDistributor chunkLoader;
@@ -70,22 +66,23 @@ public class World {
         World.player = player;
         World.entities = entities;
         this.rawModelPool = pool;
-        noise = new Noise(new Random().nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE));
+        noise = new Noise(ThreadLocalRandom.current().nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE));
         chunksLoaded = new ConcurrentLinkedQueue<>();
-        chunksToSave = new ArrayBlockingQueue<>(5000);
+        chunksToSave = new ArrayBlockingQueue<>(50000);
         chunksUnLoaded = new ConcurrentLinkedQueue<>();
-        chunksToLoad = new ArrayBlockingQueue<>(5000);
+        chunksToLoad = new ArrayBlockingQueue<>(50000);
         chunks = new ConcurrentLinkedQueue<>();
         chunksToMesh = new LinkedBlockingQueue<>();
-        chunksToRender = new ArrayBlockingQueue<>(5000);
-        chunksToCompute = new ArrayBlockingQueue<>(5000);
-        chunksToUnload = new ArrayBlockingQueue<>(5000);
+        chunksToRender = new ArrayBlockingQueue<>(50000);
+        chunksToCompute = new ArrayBlockingQueue<>(50000);
+        chunksToUnload = new ArrayBlockingQueue<>(50000);
         renderer = new BlockRenderer();
         blockComputer = new BlockComputer();
         chunkComputer = new ChunkComputer();
         chunkSaver = new ChunkSaver();
         chunkLoader = new ChunkLoadingDistributor();
         doneRendering = false;
+        chunkUnloader = new ChunkUnloader();
 
 
 
@@ -110,7 +107,8 @@ public class World {
         if(!World.MeshRenderer.isEmpty()){
             World.MeshRenderer.run();
         }
-        //chunkLoader.run();
+        chunkLoader.run();
+        chunkUnloader.run();
     }
 
     public void update(){
@@ -164,6 +162,17 @@ public class World {
             }
         }
         return false;
+    }
+
+
+
+    public static void reloadChunk(Chunk chunk){
+        if(chunks.contains(chunk)){
+            chunks.remove(chunk);
+            chunksToUnload.add(chunk);
+            createChunk(chunk);
+            chunksToLoad.add(chunk);
+        }
     }
 
 
@@ -247,8 +256,6 @@ public class World {
                         Chunk chunk = chunksToLoad.poll();
                         if(chunk != null){
                             chunk.addBlocks();
-
-
 
                         lastTime = System.currentTimeMillis();
                     }
@@ -359,12 +366,18 @@ public class World {
     }
 
     public static class ChunkUnloader{
-
+        private final long TIMEOUT = 10;
+        private long lastTime = System.currentTimeMillis();
         public void run(){
-            Chunk chunk = chunksToUnload.poll();
-            if(chunk != null){
-                loader.unloadChunk(chunk);
+            if(System.currentTimeMillis() - lastTime >= TIMEOUT){
+                Chunk chunk = chunksToUnload.poll();
+                if(chunk != null){
+                    unloadChunk(chunk.getEntity());
+                    loader.unloadChunk(chunk);
+                }
+                lastTime = System.currentTimeMillis();
             }
+
         }
 
         public boolean isEmpty(){
@@ -417,9 +430,9 @@ public class World {
 
     private static class ChunkLoadingDistributor implements Runnable{
 
-        private static final long INITIALTIMEOUT = 3000;
+        private static final long INITIALTIMEOUT = 10000;
         private long lastTime = System.currentTimeMillis();
-        private static final long TIMEOUT = 0;
+        private static final long TIMEOUT = 2000;
         private final long initialTime = System.currentTimeMillis();
         @Override
         public void run() {
@@ -428,8 +441,8 @@ public class World {
                             double minX = player.getMinXValue();
                             double minZ = player.getMinZValue();
                             CopyOnWriteArrayList<Chunk> newChunks = new CopyOnWriteArrayList<>();
-                            for (int x = (int) (minX - (Chunk.getCHUNK_LENGTH() * 8)); x < minX + (Chunk.getCHUNK_LENGTH() * 8); x += Chunk.getCHUNK_LENGTH()) {
-                                for (int z = (int) (minZ - (Chunk.getCHUNK_WIDTH() * 8)); z < minZ + (Chunk.getCHUNK_WIDTH() * 8); z += Chunk.getCHUNK_WIDTH()) {
+                            for (int x = (int) (minX - (Chunk.getCHUNK_LENGTH() * MainGameLoop.getRENDERDISTANCE())); x < minX + (Chunk.getCHUNK_LENGTH() * MainGameLoop.getRENDERDISTANCE()); x += Chunk.getCHUNK_LENGTH()) {
+                                for (int z = (int) (minZ - (Chunk.getCHUNK_WIDTH() * MainGameLoop.getRENDERDISTANCE())); z < minZ + (Chunk.getCHUNK_WIDTH() * MainGameLoop.getRENDERDISTANCE()); z += Chunk.getCHUNK_WIDTH()) {
                                     Chunk chunk = World.getChunkAt(x, z);
 
 
@@ -462,14 +475,15 @@ public class World {
                             chunks.forEach(chunk -> {
                                 if(chunk != null){
                                     if(!newChunks.contains(chunk) && !chunk.isLazy()){
-                                        for(int i =0; i<entities.length;i++){
-                                            if(entities[i] == chunk.getEntity()){
-                                                entities[i] = null;
-                                                chunks.remove(chunk);
-                                                chunksLoaded.remove(chunk);
-                                                chunksToUnload.add(chunk);
-                                            }
+
+                                        if(chunks.remove(chunk)){
+                                            chunksLoaded.remove(chunk);
+                                            chunksToUnload.add(chunk);
                                         }
+
+
+
+
                                     }
                                 }
                             });

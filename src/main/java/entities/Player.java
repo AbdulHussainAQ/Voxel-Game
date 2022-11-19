@@ -21,8 +21,8 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Player extends Entity {
 
-    private final float RUN_SPEED = 4.317f; //Walk speed
-    //private final float RUN_SPEED = 10.8f; //Fly speed
+    //private final float RUN_SPEED = 4.317f; //Walk speed
+    private final float RUN_SPEED = 10.8f; //Fly speed
     //private final float RUN_SPEED = 20f;
     private final float GRAVITY = 0;
 
@@ -201,12 +201,12 @@ public class Player extends Entity {
     public Location getEyeLocation(){
 
         Location loc = this.getPosition().clone();
-        loc.setY(loc.getY() + 0.1f);
+        loc.setY(loc.getY());
         return loc;
 
     }
 
-    public Location rayTrace(double maxDistance){
+    public Location rayTraceBreak(double maxDistance){
         Location eyeLocation = this.getEyeLocation();
         Vector3f direction = eyeLocation.getDirection(this.camera.getYaw(), this.camera.getPitch());
         Vector3f directionNormalized = (Vector3f) direction.normalise();
@@ -217,7 +217,12 @@ public class Player extends Entity {
 
         while (distance < maxDistance){
             finalLoc.add(directionNormalized);
-            System.out.println("LOCATION: "+finalLoc.clone().toVector());
+            Chunk chunk = World.getChunk(finalLoc.x, finalLoc.z);
+            if(chunk != null){
+                chunk.setBlock((int) finalLoc.x, (int) finalLoc.y, (int) finalLoc.z, Block.Material.AIR);
+                World.reloadChunk(chunk);
+                break;
+            }
             distance++;
         }
 
@@ -229,11 +234,7 @@ public class Player extends Entity {
 
     public void breakBlock() {
 
-        Location location = rayTrace(REACHDISTANCE);
-        Chunk chunk = World.getChunk(location.x, location.z);
-        if(chunk != null){
-            System.out.println((World.unloadChunk(chunk.getEntity()) ? "Chunk unloaded" : "NOTHING HAPPENED"));
-        }
+        rayTraceBreak(REACHDISTANCE);
 
     }
 }

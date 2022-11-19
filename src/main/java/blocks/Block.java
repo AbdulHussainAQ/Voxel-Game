@@ -84,6 +84,17 @@ public class Block implements Serializable {
         }
 
 
+        public static int toID(Material material){
+            if(material == AIR){
+                return 0;
+            }
+            if(material == GRASS){
+                return 1;
+            }
+            return -1;
+        }
+
+
     }
 
 

@@ -67,7 +67,7 @@ public class Loader{
     }
 
 
-    /*
+
     public RawModel loadToVAO(float[] positions, int dimensions) {
         int vaoID = createVAO();
         this.storeDataInAttributeList(0, dimensions, positions);
@@ -75,7 +75,7 @@ public class Loader{
         return new RawModel(vaoID, positions.length / dimensions);
     }
 
-     */
+
 
     public int loadTexture(String fileName) {
         Texture texture = null;
@@ -155,11 +155,25 @@ public class Loader{
         GL30.glBindVertexArray(vaoID);
         return vaoID;
     }
+    protected int createVAO() {
+        int vaoID = GL30.glGenVertexArrays();
+        GL30.glBindVertexArray(vaoID);
+        return vaoID;
+    }
 
     protected void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data, List<Integer> vbos) {
         int vboID = GL15.glGenBuffers();
 
         vbos.add(vboID);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
+        FloatBuffer buffer = storeDataInFloatBuffer(data);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_DYNAMIC_DRAW);
+        GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, 0, 0);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+    }
+
+    protected void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data) {
+        int vboID = GL15.glGenBuffers();
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
         FloatBuffer buffer = storeDataInFloatBuffer(data);
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_DYNAMIC_DRAW);

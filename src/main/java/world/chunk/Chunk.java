@@ -12,7 +12,6 @@ import world.World;
 import world.worldgen.Noise;
 
 import java.io.Serializable;
-import java.util.Random;
 import java.util.UUID;
 
 import static blocks.Block.FACE.*;
@@ -76,10 +75,11 @@ public class Chunk implements Serializable{
 
     }
 
+
+
+
+
     public void lazyLoadSurroundingChunks() {
-
-
-        long start = System.nanoTime();
 
 
         if (!World.chunkExists(MIN_X - CHUNK_LENGTH, MIN_Z)) {
@@ -163,7 +163,9 @@ public class Chunk implements Serializable{
 
                 for (int z = 0; z < CHUNK_WIDTH; z++) {
 
-                    int TERRAIN_HEIGHT = (int) Math.max(1, (CHUNK_HEIGHT*noise.noise(MIN_X+x, MIN_Z+z)));
+                    //int TERRAIN_HEIGHT = (int) Math.max(1, (CHUNK_HEIGHT*noise.noise(MIN_X+x, MIN_Z+z)));
+
+                    int TERRAIN_HEIGHT = 10;
 
                     /*
                     if(y >= TERRAIN_HEIGHT -1 && x == CHUNK_LENGTH / 2 && z == CHUNK_WIDTH / 2){
@@ -328,6 +330,14 @@ public class Chunk implements Serializable{
 
         return blocksInChunk[x][y][z] == 0;
 
+    }
+
+
+    public void setBlock(int xLoc, int yLoc, int zLoc, Material material){
+        int x = Math.min((xLoc - MIN_X), 15) ;
+        int z = Math.min((zLoc - MIN_Z), 15);
+        blocksInChunk[x][yLoc][z] =Material.toID(material);
+        System.out.println("Set block at: X: "+x+" Y: "+yLoc+" Z: "+z);
     }
 
     public boolean containsCoords(float x, float z){

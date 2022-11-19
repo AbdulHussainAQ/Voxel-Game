@@ -30,9 +30,13 @@ public class Renderer {
             List<Entity> batch = entities.get(model);
             for (Entity entity : batch) {
                 prepareInstance(entity);
+                try{
+                    GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getVertexCount(),
+                            GL11.GL_UNSIGNED_INT, 0);
+                }catch (OpenGLException ignore){
 
-                GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getVertexCount(),
-                        GL11.GL_UNSIGNED_INT, 0);
+                }
+
             }
             unbindTexturedModel();
 

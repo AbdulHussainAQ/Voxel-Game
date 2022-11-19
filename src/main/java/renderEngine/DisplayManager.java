@@ -17,7 +17,7 @@ public class DisplayManager {
 	public static void createDisplay(){
 		ContextAttribs attribs = new ContextAttribs(3,2)
 		.withForwardCompatible(true)
-		.withProfileCore(true);
+		.withProfileCore(true).withDebug(true);
 
 		try {
 			Display.setDisplayMode(new DisplayMode(WIDTH,HEIGHT));
@@ -33,7 +33,7 @@ public class DisplayManager {
 	}
 
 	public static void updateDisplay(){
-
+		Display.sync(FPS_CAP);
 		Display.update();
 		long currentFrameTime = getCurrentTime();
 		delta = (currentFrameTime - lastFrameTime)/1000f;

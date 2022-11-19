@@ -1,6 +1,7 @@
 package world.worldgen;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Noise {
 
@@ -16,7 +17,7 @@ public class Noise {
     }
 
     public Noise() {
-        this.seed = new Random().nextGaussian() * 255;
+        this.seed = ThreadLocalRandom.current().nextGaussian() * 255;
         init();
     }
 
