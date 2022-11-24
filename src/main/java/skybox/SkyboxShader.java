@@ -7,6 +7,7 @@ import renderEngine.DisplayManager;
 import shaders.ShaderProgram;
 import toolbox.Maths;
 
+/*
 public class SkyboxShader extends ShaderProgram {
 
     private static final String VERTEX_FILE = "src/main/java/skybox/skyboxVertexShader.txt";
@@ -70,3 +71,5 @@ public class SkyboxShader extends ShaderProgram {
     }
 
 }
+
+ */

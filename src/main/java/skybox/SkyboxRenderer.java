@@ -12,6 +12,7 @@ import renderEngine.Loader;
 
 import java.nio.FloatBuffer;
 
+/*
 public class SkyboxRenderer {
 
     private static final float SIZE = 500f;
@@ -126,3 +127,6 @@ public class SkyboxRenderer {
 
 
 }
+
+
+ */

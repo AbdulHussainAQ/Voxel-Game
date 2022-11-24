@@ -4,8 +4,8 @@ import blocks.Block;
 import lombok.Getter;
 import lombok.Setter;
 import models.TexturedModel;
-import org.ehcache.sizeof.SizeOf;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
@@ -13,20 +13,19 @@ import org.lwjgl.util.vector.Vector3f;
 import renderEngine.DisplayManager;
 import world.Location;
 
-import org.lwjgl.opengl.GL11.*;
 import world.World;
 import world.chunk.Chunk;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class Player extends Entity {
-
-    //private final float RUN_SPEED = 4.317f; //Walk speed
-    private final float RUN_SPEED = 10.8f; //Fly speed
+    //private final float RUN_SPEED = 1f; //Test speed
+    private final float RUN_SPEED = 4.317f; //Walk speed
+    //private final float RUN_SPEED = 10.8f; //Fly speed
     //private final float RUN_SPEED = 20f;
     private final float GRAVITY = 0;
 
-    private final int REACHDISTANCE = 16;
+    private final int REACHDISTANCE = 7;
 
     private final float JUMP_POWER = RUN_SPEED;
 
@@ -77,8 +76,10 @@ public class Player extends Entity {
 	}
 	*/
 
-
+    private long lastTime = System.currentTimeMillis();
+    private final long TIMEOUT = 50;
     public void move() {
+
         jumping = false;
         horizontal = false;
         checkInputs();
@@ -170,14 +171,11 @@ public class Player extends Entity {
         if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
             jump();
         }
-        if(Keyboard.isKeyDown(Keyboard.KEY_C)){
-            World.enableChunkLoading = !World.enableChunkLoading;
+        if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
+            Mouse.setGrabbed(false);
         }
-        if(Keyboard.isKeyDown(Keyboard.KEY_B)){
-            System.out.println(Block.instanceCount);
-        }
-        if(Keyboard.isKeyDown(Keyboard.KEY_F)){
-            World.done = true;
+        if(Mouse.isButtonDown(0) && !Mouse.isGrabbed()){
+            Mouse.setGrabbed(true);
         }
 
     }
@@ -200,17 +198,53 @@ public class Player extends Entity {
 
     public Location getEyeLocation(){
 
-        Location loc = this.getPosition().clone();
-        loc.setY(loc.getY());
+        Location loc = camera.getPosition().clone();
         return loc;
 
     }
 
-    public Location rayTraceBreak(double maxDistance){
+    private void rayTracePlace(int maxDistance) {
+
         Location eyeLocation = this.getEyeLocation();
         Vector3f direction = eyeLocation.getDirection(this.camera.getYaw(), this.camera.getPitch());
         Vector3f directionNormalized = (Vector3f) direction.normalise();
         Location finalLoc = eyeLocation.clone();
+
+
+        double distance = 0;
+
+
+        while (distance < maxDistance) {
+            finalLoc.add(directionNormalized);
+            Chunk chunk = World.getChunk(finalLoc.x, finalLoc.z);
+            if (chunk != null) {
+                System.out.println("BLOCK ID: " + chunk.getBlock((int) Math.floor(finalLoc.x), (int) Math.floor(finalLoc.y), (int) Math.floor(finalLoc.z)));
+                if (chunk.getBlock((int) Math.floor(finalLoc.x), (int) Math.floor(finalLoc.y), (int) Math.floor(finalLoc.z)) != 0) {
+
+
+                    for(double i = distance; i>=0;i--){
+                        finalLoc.subtract(directionNormalized);
+                        if(chunk.getBlock((int) Math.floor(finalLoc.x), (int) Math.floor(finalLoc.y), (int) Math.floor(finalLoc.z)) == 0){
+                            chunk.setBlock((int) Math.floor(finalLoc.x), (int) Math.floor(finalLoc.y), (int) Math.floor(finalLoc.z), Block.Material.SAND);
+                            World.chunksToUpdate.add(chunk);
+                            break;
+                        }
+                    }
+                    break;
+
+                }
+            }
+            distance+=1;
+        }
+
+    }
+
+    public void rayTraceBreak(double maxDistance){
+        Location eyeLocation = this.getEyeLocation();
+        Vector3f direction = eyeLocation.getDirection(this.camera.getYaw(), this.camera.getPitch());
+        Vector3f directionNormalized = (Vector3f) direction.normalise();
+        Location finalLoc = eyeLocation.clone();
+
 
         double distance = 0;
 
@@ -219,15 +253,15 @@ public class Player extends Entity {
             finalLoc.add(directionNormalized);
             Chunk chunk = World.getChunk(finalLoc.x, finalLoc.z);
             if(chunk != null){
-                chunk.setBlock((int) finalLoc.x, (int) finalLoc.y, (int) finalLoc.z, Block.Material.AIR);
-                World.reloadChunk(chunk);
-                break;
+                System.out.println("BLOCK ID: "+chunk.getBlock((int) Math.floor(finalLoc.x), (int) Math.floor(finalLoc.y), (int) Math.floor(finalLoc.z)));
+                if(chunk.getBlock((int) Math.floor(finalLoc.x), (int) Math.floor(finalLoc.y), (int) Math.floor(finalLoc.z)) != 0){
+                    chunk.setBlock((int) Math.floor(finalLoc.x), (int) Math.floor(finalLoc.y), (int) Math.floor(finalLoc.z), Block.Material.AIR);
+                    World.chunksToUpdate.add(chunk);
+                    break;
+                }
             }
-            distance++;
+            distance+=1;
         }
-
-        return finalLoc;
-
 
 
     }
@@ -237,4 +271,12 @@ public class Player extends Entity {
         rayTraceBreak(REACHDISTANCE);
 
     }
+
+    public void placeBlock() {
+
+        rayTracePlace(REACHDISTANCE);
+
+    }
+
+
 }

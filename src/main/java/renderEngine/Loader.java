@@ -44,6 +44,7 @@ public class Loader{
 
 
     public void unloadChunk(Chunk chunk){
+        /*
         List<Integer> ids = vbos.get(chunk);
 
         if(!vbos.containsKey(chunk)){
@@ -64,6 +65,8 @@ public class Loader{
 
         vaos.remove(chunk);
         vbos.remove(chunk);
+
+         */
     }
 
 
@@ -126,6 +129,13 @@ public class Loader{
         GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
         textures.add(texID);
         return texID;
+    }
+
+    public RawModel loadToVAO(float[] pos) {
+        int vaoID = createVAO();
+        storeDataInAttributeList(0, 2, pos);
+        unbindVAO();
+        return new RawModel(vaoID, pos.length / 2);
     }
 
     protected TextureData decodeTextureFile(String fileName) {

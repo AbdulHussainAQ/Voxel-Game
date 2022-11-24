@@ -17,7 +17,7 @@ public class Noise {
     }
 
     public Noise() {
-        this.seed = ThreadLocalRandom.current().nextGaussian() * 255;
+        this.seed = new Random().nextGaussian() * 255;
         init();
     }
 

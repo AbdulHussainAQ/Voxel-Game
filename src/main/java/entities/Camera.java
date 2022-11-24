@@ -2,13 +2,14 @@ package entities;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
+import world.Location;
 
 public class Camera {
 
     private float distanceFromPlayer = 0;
     private float angleAroundPlayer = 0;
 
-    private final Vector3f position = new Vector3f(0, 0, 0);
+    private final Location position = new Location(0, 0, 0);
     private float pitch = 20;
     private float yaw = 0;
     private float roll;
@@ -38,7 +39,7 @@ public class Camera {
         this.pitch = -pitch;
     }
 
-    public Vector3f getPosition() {
+    public Location getPosition() {
         return position;
     }
 
@@ -58,15 +59,15 @@ public class Camera {
 
         position.x = player.getPosition().getX();
         position.z = player.getPosition().getZ();
-        position.y = player.getPosition().getY() + 6;
+        position.y = player.getPosition().getY();
     }
 
     private float calculateHorizontalDistance() {
-        return (float) (distanceFromPlayer * Math.cos(Math.toRadians(pitch + 4)));
+        return (float) (distanceFromPlayer * Math.cos(Math.toRadians(pitch)));
     }
 
     private float calculateVerticalDistance() {
-        return (float) (distanceFromPlayer * Math.sin(Math.toRadians(pitch + 4)));
+        return (float) (distanceFromPlayer * Math.sin(Math.toRadians(pitch)));
     }
 
     private void calculateZoom() {
@@ -83,8 +84,8 @@ public class Camera {
         pitch -= pitchChange;
         if (pitch < -90) {
             pitch = -90;
-        } else if (pitch > 80) {
-            pitch = 80;
+        } else if (pitch > 90) {
+            pitch = 90;
         }
 
 
@@ -100,13 +101,17 @@ public class Camera {
 
 
 
-    private long lastClicked = System.currentTimeMillis();
+    private static long lastClicked = System.currentTimeMillis();
 
     private void checkClick(){
 
-        if(Mouse.isButtonDown(0) && System.currentTimeMillis() - lastClicked > 100){
+        if(Mouse.isButtonDown(0) && (System.currentTimeMillis() - lastClicked > 100)){
 
             player.breakBlock();
+            lastClicked = System.currentTimeMillis();
+        }
+        if(Mouse.isButtonDown(1) && (System.currentTimeMillis()) - lastClicked > 100){
+            player.placeBlock();
             lastClicked = System.currentTimeMillis();
         }
     }

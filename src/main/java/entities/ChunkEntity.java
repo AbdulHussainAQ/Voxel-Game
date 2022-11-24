@@ -21,4 +21,10 @@ public class ChunkEntity extends Entity implements Serializable {
         this.chunkUUID = chunk.getChunkUUID();
         this.chunk = chunk;
     }
+
+    public ChunkEntity(TexturedModel model, Location position, float rotX, float rotY, float rotZ, float scale, Chunk chunk) {
+        super(model, position, rotX, rotY, rotZ, scale);
+        this.chunkUUID = chunk.getChunkUUID();
+        this.chunk = chunk;
+    }
 }

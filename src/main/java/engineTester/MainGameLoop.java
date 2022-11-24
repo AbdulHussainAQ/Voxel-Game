@@ -15,7 +15,6 @@ import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
 import textures.ModelTexture;
-import toolbox.MousePicker;
 import world.Location;
 import world.World;
 import world.chunk.Chunk;
@@ -35,7 +34,6 @@ public class MainGameLoop {
         DisplayManager.createDisplay();
         Loader loader = new Loader();
         modelTexture = new ModelTexture(loader.loadTexture("atlas"));
-        modelTexture.setNumberOfRows(32);
 
 
         RawModelPool rawModelPool = new RawModelPool(loader);
@@ -90,7 +88,9 @@ public class MainGameLoop {
         Camera camera = new Camera(player);
         player.setCamera(camera);
 
-        GuiTexture crosshair = new GuiTexture(loader.loadTexture("crosshair"), new Vector2f(Display.getHeight()/2f, Display.getWidth()/2f),new Vector2f(1000,1000));
+
+        List<GuiTexture> guis = new ArrayList<GuiTexture>();
+
         GuiRenderer guiRenderer = new GuiRenderer(loader);
 
 
@@ -99,10 +99,8 @@ public class MainGameLoop {
         while (!Display.isCloseRequested()) {
 
 
-
             player.move();
             camera.move();
-            guiRenderer.render(List.of(crosshair));
 
 
             for(ChunkEntity c: chunks){
@@ -123,7 +121,7 @@ public class MainGameLoop {
 
 
             renderer.renderScene(lights, camera);
-
+            guiRenderer.render(guis);
 
             DisplayManager.updateDisplay();
         }
@@ -131,6 +129,7 @@ public class MainGameLoop {
         //*********Clean Up Below**************
         renderer.cleanUp();
         loader.cleanUp();
+        guiRenderer.clean();
         DisplayManager.closeDisplay();
 
     }

@@ -13,6 +13,10 @@ import world.World;
 import world.chunk.Chunk;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class BlockRenderer implements Serializable {
@@ -47,10 +51,10 @@ public class BlockRenderer implements Serializable {
     static float[][][] pos = new float[Chunk.getCHUNK_LENGTH()*Chunk.getCHUNK_WIDTH()*Chunk.getCHUNK_HEIGHT()][6][13];
 
     private static final float[] TEXTURECOORDS = new float[]{
-            0.1f,0.1f,
-            0.1f,0.7f,
-            0.7f,0.7f,
-            0.7f,0.1f,
+            4f/16f, 0.f, //TOP LEFT
+            4f/16f, 0.0625f, // BOTTOM LEFT
+            5f/16f, 0.0625f,
+            5f/16f, 0.f,
     };
 
     private static final float[] TOPFACE = new float[]{
@@ -72,10 +76,11 @@ public class BlockRenderer implements Serializable {
             -0.5f,0.5f,0f,
     };
     private static final float[] RIGHTFACE = new float[]{
-            0.5f,-0.5f,1f,
-            0.5f,0.5f,1f,
             -0.5f,0.5f,1f,
             -0.5f,-0.5f,1f,
+            0.5f,-0.5f,1f,
+            0.5f,0.5f,1f,
+
     };
     private static final float[] FRONTFACE = new float[]{
             0.5f,0.5f,1f,
@@ -101,6 +106,7 @@ public class BlockRenderer implements Serializable {
         positionsLength = 0;
         
     }
+    LinkedList<Float> textureCoordsList = new LinkedList<>();
 
 
 
@@ -163,7 +169,8 @@ public class BlockRenderer implements Serializable {
 
         block.setIndices(generateIndices(faces.length));
         block.setPositions(positionss);
-        block.setTextureCoords(textureCoords(faces.length));
+        textureCoords(faces, block);
+
 
         blocks[index] = block;
         positionss = new float[][]{{0,0,0,0,0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0,0,0,0,0}};
@@ -175,6 +182,8 @@ public class BlockRenderer implements Serializable {
     public int[] indices;
 
     public synchronized void computeMesh(){
+
+        long start = System.nanoTime();
 
         positions = new float[positionsLength];
         int[] index = {0, 0, 0};
@@ -228,8 +237,16 @@ public class BlockRenderer implements Serializable {
             }
         }
         indices = generateIndices(faces);
-        textureCoords = textureCoords(faces);
-        //System.out.println("FINISHED COMPUTING MESH: "+(System.nanoTime() - start/ Math.pow(10, 9)));
+
+
+        textureCoords = new float[textureCoordsList.size()];
+        int i = 0;
+        for(Float num : textureCoordsList){
+            this.textureCoords[i] = num;
+            i++;
+        }
+
+        System.out.println("FINISHED COMPUTING MESH: "+(System.nanoTime() - start )/ Math.pow(10, 9));
     }
     @Getter
     private float[] textureCoords;
@@ -240,7 +257,7 @@ public class BlockRenderer implements Serializable {
 
     public synchronized void renderChunk(){
         Location location = new Location(minX,0,minZ);
-        ChunkEntity entity = new ChunkEntity(texturedModel, 321, location, 0,0,0,Block.getBLOCK_WIDTH(), chunk);
+        ChunkEntity entity = new ChunkEntity(texturedModel, 0, location, 0,0,0,Block.getBLOCK_WIDTH(), chunk);
         chunk.setEntity(entity);
         World.renderChunk(entity);
 
@@ -249,15 +266,26 @@ public class BlockRenderer implements Serializable {
 
 
     @Contract(pure = true)
-    public synchronized float @NotNull [] textureCoords(int num){
-        float[] coords = new float[8*num];
-        for(int i = 0; i< coords.length;){
-            for (float textureCoord : TEXTURECOORDS) {
-                coords[i++] = textureCoord;
+    public synchronized void textureCoords(Block.FACE[] faces, Block block){
+
+        if(block == null)return;
+
+        Block.Material material = block.getMaterial();
+        BlockTextureHandler textureHandler = new BlockTextureHandler();
+        textureHandler.setType(material);
+        LinkedList<Float> coords = new LinkedList<>();
+        for(Block.FACE face : faces){
+            if(face == null)continue;
+            switch (face){
+                case TOP -> coords.addAll(textureHandler.topFace);
+                case BACK -> coords.addAll(textureHandler.backFace);
+                case LEFT -> coords.addAll(textureHandler.leftFace);
+                case RIGHT -> coords.addAll(textureHandler.rightFace);
+                case FRONT -> coords.addAll(textureHandler.frontFace);
+                case BOTTOM -> coords.addAll(textureHandler.bottomFace);
             }
         }
-
-        return coords;
+        textureCoordsList.addAll(coords);
     }
 
 

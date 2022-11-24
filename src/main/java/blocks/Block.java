@@ -1,12 +1,12 @@
 package blocks;
 
 import lombok.Getter;
+import lombok.Setter;
 import world.Location;
 
 import java.io.Serializable;
 
 public class Block implements Serializable {
-    @Getter
     private final Location location;
 
     @Getter
@@ -14,9 +14,12 @@ public class Block implements Serializable {
     public int[] indices;
 
     public float[] textureCoords;
-
-
     public float[][] positions;
+
+
+    @Getter @Setter
+    public float[] uvs;
+
     private final Material material;
 
     public static int instanceCount = 0;
@@ -70,7 +73,7 @@ public class Block implements Serializable {
 
     public enum Material {
 
-        GRASS, AIR;
+        GRASS, AIR, STONE, DIRT, OAK_LOG, OAK_LEAVES, SAND;
 
 
         public static Material getByID(int id) {
@@ -80,7 +83,26 @@ public class Block implements Serializable {
             if (id == 1) {
                 return GRASS;
             }
+            if(id == 2){
+                return DIRT;
+            }
+            if(id == 3){
+                return STONE;
+            }
+            if(id == 4){
+                return OAK_LOG;
+            }
+            if(id == 5){
+                return OAK_LEAVES;
+            }
+            if(id == 6){
+                return SAND;
+            }
             return null;
+        }
+
+        public static boolean isTransparent(int id){
+            return id == 0 || id == 5;
         }
 
 
@@ -90,6 +112,9 @@ public class Block implements Serializable {
             }
             if(material == GRASS){
                 return 1;
+            }
+            if(material == SAND){
+                return 6;
             }
             return -1;
         }

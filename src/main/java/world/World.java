@@ -20,7 +20,7 @@ public class World {
 
     private static ConcurrentLinkedQueue<Chunk> chunks;
     private static ConcurrentLinkedQueue<Chunk> chunksLoaded;
-    private static ConcurrentLinkedQueue<Chunk> chunksUnLoaded;
+
     protected static ArrayBlockingQueue<ChunkEntity> chunksToRender;
     private static ArrayBlockingQueue<Chunk> chunksToLoad;
 
@@ -31,6 +31,10 @@ public class World {
     private static ArrayBlockingQueue<Chunk> chunksToSave;
 
     private static ArrayBlockingQueue<Chunk> chunksToUnload;
+
+    public static ArrayBlockingQueue<Chunk> chunksToUpdate;
+
+
 
 
     public static boolean done = false;
@@ -48,17 +52,22 @@ public class World {
 
     protected static Entity[] entities;
 
-    private static int index = 0;
+    private static final int index = 0;
 
-    private BlockRenderer renderer;
+    private final BlockRenderer renderer;
 
-    private BlockComputer blockComputer;
+    private final BlockComputer blockComputer;
 
-    private ChunkUnloader chunkUnloader;
+    private final ChunkUnloader chunkUnloader;
 
-    private ChunkComputer chunkComputer;
-    private ChunkSaver chunkSaver;
-    private ChunkLoadingDistributor chunkLoader;
+    private final ChunkComputer chunkComputer;
+    private final ChunkSaver chunkSaver;
+    private final ChunkLoadingDistributor chunkLoader;
+
+    private final ChunkUpdater chunkUpdater;
+
+    @Getter
+    private static double seed;
 
 
     public World(Player player, Entity[] entities, RawModelPool pool, Loader loader) {
@@ -66,16 +75,18 @@ public class World {
         World.player = player;
         World.entities = entities;
         this.rawModelPool = pool;
-        noise = new Noise(ThreadLocalRandom.current().nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE));
+        seed = ThreadLocalRandom.current().nextGaussian(Integer.MIN_VALUE, Integer.MAX_VALUE);
+        noise = new Noise(seed);
         chunksLoaded = new ConcurrentLinkedQueue<>();
         chunksToSave = new ArrayBlockingQueue<>(50000);
-        chunksUnLoaded = new ConcurrentLinkedQueue<>();
+
         chunksToLoad = new ArrayBlockingQueue<>(50000);
         chunks = new ConcurrentLinkedQueue<>();
         chunksToMesh = new LinkedBlockingQueue<>();
         chunksToRender = new ArrayBlockingQueue<>(50000);
         chunksToCompute = new ArrayBlockingQueue<>(50000);
         chunksToUnload = new ArrayBlockingQueue<>(50000);
+        chunksToUpdate = new ArrayBlockingQueue<>(50000);
         renderer = new BlockRenderer();
         blockComputer = new BlockComputer();
         chunkComputer = new ChunkComputer();
@@ -83,7 +94,7 @@ public class World {
         chunkLoader = new ChunkLoadingDistributor();
         doneRendering = false;
         chunkUnloader = new ChunkUnloader();
-
+        chunkUpdater = new ChunkUpdater();
 
 
 
@@ -107,8 +118,11 @@ public class World {
         if(!World.MeshRenderer.isEmpty()){
             World.MeshRenderer.run();
         }
-        chunkLoader.run();
-        chunkUnloader.run();
+        if(chunksToUpdate.size() > 0){
+            chunkUpdater.run();
+        }
+        //chunkLoader.run();
+        //chunkUnloader.run();
     }
 
     public void update(){
@@ -169,7 +183,6 @@ public class World {
     public static void reloadChunk(Chunk chunk){
         if(chunks.contains(chunk)){
             chunks.remove(chunk);
-            chunksToUnload.add(chunk);
             createChunk(chunk);
             chunksToLoad.add(chunk);
         }
@@ -181,23 +194,12 @@ public class World {
 
     public static class MeshRenderer {
 
-        private static final long TIMEOUT = 0;
+
         private static long lastTime = System.currentTimeMillis();
         private static int done = 0;
         private static long s = System.currentTimeMillis();
         public static void run() {
 
-
-                if(System.currentTimeMillis() - lastTime > 2000 && chunksToRender.size() == 0){
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-
-            if(System.currentTimeMillis() - lastTime > TIMEOUT){
                 Chunk chunk = chunksToMesh.poll();
                 if (chunk != null) {
                     //System.out.println("RENDERING");
@@ -222,7 +224,7 @@ public class World {
 
                 }
 
-            }
+
 
 
         }
@@ -256,6 +258,7 @@ public class World {
                         Chunk chunk = chunksToLoad.poll();
                         if(chunk != null){
                             chunk.addBlocks();
+                            chunksToMesh.add(chunk);
 
                         lastTime = System.currentTimeMillis();
                     }
@@ -271,68 +274,50 @@ public class World {
 
     private static class BlockRenderer implements Runnable{
 
-        private long lastTime = System.currentTimeMillis();
-        private static final long TIMEOUT = 10;
+
 
         private int c = 0;
 
         @Override
         public void run() {
 
-                if(System.currentTimeMillis() - lastTime > 2000 && chunksToRender.size() == 0){
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+
+            ChunkEntity entity = chunksToRender.poll();
+            if (entity != null) {
+                entity.getChunk().setRendered(true);
+                for(int j=0; j<entities.length;j++){
+                    if(entities[j] == entity.getChunk().getOldChunkEntity()){
+                        entities[j] = entity;
+                        c++;
+                        break;
                     }
                 }
-
-
-                if(System.currentTimeMillis() - lastTime > TIMEOUT){
-                            ChunkEntity entity = chunksToRender.poll();
-                            if (entity != null) {
-                                entity.getChunk().setRendered(true);
-                                for(int j=0; j<entities.length;j++){
-                                    if(entities[j] == null){
-                                        entities[j] = entity;
-                                        c++;
-                                        break;
-                                    }
-                                }
-                                if(c == ((MainGameLoop.getRENDERDISTANCE()*2)*((MainGameLoop.getRENDERDISTANCE()*2)))){
-                                    System.out.println("DONE");;
-                                    doneRendering = true;
-                                }
-                                for (Chunk chunk : chunks) {
-                                    if(chunksLoaded.contains(chunk)) continue;
-                                    if (chunksUnLoaded.contains(chunk)) continue;
-                                    if (chunk.getChunkUUID() == entity.getChunkUUID()) {
-                                        chunksLoaded.add(chunk);
-
-                                    }
-                                }
-                                Arrays.stream(entities).forEach(e ->{
-                                    if(e != null){
-                                        ChunkEntity chunkEntity = (ChunkEntity) e;
-                                        Chunk chunk = chunkEntity.getChunk();
-                                        if(!chunks.contains(chunk)){
-                                            chunks.add(chunk);
-                                        }
-                                    }
-                                });
-                                chunksToSave.add(entity.getChunk());
-
-
-
+                if(c == ((MainGameLoop.getRENDERDISTANCE()*2)*((MainGameLoop.getRENDERDISTANCE()*2)))){
+                    System.out.println("DONE");;
+                    doneRendering = true;
+                }
+                for (Chunk chunk : chunks) {
+                    if(chunksLoaded.contains(chunk)) continue;
+                    if (chunk.getChunkUUID() == entity.getChunkUUID()) {
+                        chunksLoaded.add(chunk);
 
                     }
-                    lastTime = System.currentTimeMillis();
                 }
+                Arrays.stream(entities).forEach(e ->{
+                    if(e != null){
+                        ChunkEntity chunkEntity = (ChunkEntity) e;
+                        Chunk chunk = chunkEntity.getChunk();
+                        if(!chunks.contains(chunk)){
+                            chunks.add(chunk);
+                        }
+                    }
+                });
+                chunksToSave.add(entity.getChunk());
 
 
 
 
-
+            }
         }
     }
 
@@ -366,7 +351,7 @@ public class World {
     }
 
     public static class ChunkUnloader{
-        private final long TIMEOUT = 10;
+        private final long TIMEOUT = 0;
         private long lastTime = System.currentTimeMillis();
         public void run(){
             if(System.currentTimeMillis() - lastTime >= TIMEOUT){
@@ -497,6 +482,25 @@ public class World {
 
 
             }
+        }
+
+
+        private static class ChunkUpdater implements Runnable{
+
+
+
+            @Override
+            public void run() {
+                Chunk chunk = chunksToUpdate.poll();
+                if(chunk != null){
+                    chunk.setOldChunkEntity(chunk.getEntity());
+                    chunk.updateChunk();
+                    chunksToMesh.add(chunk);
+                }
+            }
+
+
+
         }
 
 

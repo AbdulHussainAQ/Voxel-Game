@@ -98,7 +98,7 @@ public class Location implements Cloneable, Serializable {
     }
 
     @NotNull
-    public Location add(int x, int y, int z) {
+    public Location add(float x, float y, float z) {
 
         this.x += x + BLOCK_WIDTH;
         this.y += y + BLOCK_WIDTH;
@@ -137,7 +137,7 @@ public class Location implements Cloneable, Serializable {
         vector.setY((float) -Math.sin(Math.toRadians(pitch)));
         double xz = Math.cos(Math.toRadians(pitch));
         vector.setX((float) (xz * Math.sin(Math.toRadians(yaw))));
-        vector.setZ((float) (xz * Math.cos(Math.toRadians(yaw))));
+        vector.setZ((float) (-xz * Math.cos(Math.toRadians(yaw))));
         return vector;
     }
 
