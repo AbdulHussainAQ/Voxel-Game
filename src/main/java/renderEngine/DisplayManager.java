@@ -23,17 +23,19 @@ public class DisplayManager {
 			Display.setDisplayMode(new DisplayMode(WIDTH,HEIGHT));
 			Display.create(new PixelFormat(), attribs);
 			Display.setTitle("Minecraft");
+			Display.setResizable(true);
 
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
 
-		GL11.glViewport(0,0, WIDTH, HEIGHT);
+
 		lastFrameTime = getCurrentTime();
 	}
 
 	public static void updateDisplay(){
 		Display.sync(FPS_CAP);
+		GL11.glViewport(0,0, Display.getWidth(), Display.getHeight());
 		Display.update();
 		long currentFrameTime = getCurrentTime();
 		delta = (currentFrameTime - lastFrameTime)/1000f;

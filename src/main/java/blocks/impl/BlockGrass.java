@@ -55,10 +55,10 @@ public class BlockGrass {
 
 	public static final float[] UV_BOTTOM = {
 
-			0.1875f, 0.0f,
-			0.1875f, 0.0625f,
-			0.25f, 0.0625f,
-			0.25f, 0,
+			0.0625f, 0.0f,
+			0.0625f, 0.0625f,
+			0.125f, 0.0625f,
+			0.125f, 0,
 
 	};
 }

@@ -73,7 +73,7 @@ public class Block implements Serializable {
 
     public enum Material {
 
-        GRASS, AIR, STONE, DIRT, OAK_LOG, OAK_LEAVES, SAND;
+        GRASS, AIR, STONE, DIRT, OAK_LOG, OAK_LEAVES, SAND, WATER;
 
 
         public static Material getByID(int id) {
@@ -98,6 +98,9 @@ public class Block implements Serializable {
             if(id == 6){
                 return SAND;
             }
+            if(id == 7){
+                return WATER;
+            }
             return null;
         }
 
@@ -115,6 +118,12 @@ public class Block implements Serializable {
             }
             if(material == SAND){
                 return 6;
+            }
+            if(material == OAK_LEAVES){
+                return 5;
+            }
+            if(material == WATER){
+                return 7;
             }
             return -1;
         }

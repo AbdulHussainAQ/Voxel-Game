@@ -52,7 +52,7 @@ public class MainGameLoop {
 
         MasterRenderer renderer = new MasterRenderer(loader);
 
-        Player player = new Player(null, new Location(5, 3, 5), 0, 0, 0, 1f);
+        Player player = new Player(null, new Location(5, 110, 5), 0, 0, 0, 1f);
         World world = new World(player, chunks, rawModelPool, loader);
 
 
@@ -70,7 +70,7 @@ public class MainGameLoop {
                     } else {
 
 
-                        Chunk chunk1 = new Chunk(World.getNoise(),(int) x[0], (int) z[0]);
+                        Chunk chunk1 = new Chunk(World.getNoise(), (int) x[0], (int) z[0]);
                         if (!chunk1.blocksComputed) {
 
                             chunk1.computeBlocks();

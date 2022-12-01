@@ -11,6 +11,8 @@ import lombok.Setter;
 import world.Location;
 import world.World;
 import world.worldgen.Noise;
+import world.worldgen.PerlinGenerator;
+
 
 import java.io.Serializable;
 import java.util.Random;
@@ -18,8 +20,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static blocks.Block.FACE.*;
-import static blocks.Block.Material.AIR;
-import static blocks.Block.Material.isTransparent;
+import static blocks.Block.Material.*;
 
 public class Chunk implements Serializable{
 
@@ -159,19 +160,22 @@ public class Chunk implements Serializable{
         blocksInChunk = new int[CHUNK_LENGTH][CHUNK_HEIGHT + 1][CHUNK_WIDTH];
 
         long start = System.nanoTime();
-        Random treeGenerator = new Random();
-
+        ThreadLocalRandom treeGenerator = ThreadLocalRandom.current();
         for (int x = 0; x < CHUNK_LENGTH; x++) {
 
             for (int y = 0; y < CHUNK_HEIGHT; y++) {
 
                 for (int z = 0; z < CHUNK_WIDTH; z++) {
 
-                    int TERRAIN_HEIGHT = (int) Math.max(1, (10*noise.noise(MIN_X+x, MIN_Z+z)));
+                    double perlin1 = 8 * (noise.GetSimplex(MIN_X+z, MIN_Z+x) < 0 ? noise.GetSimplex(MIN_X+z, MIN_Z+x) * -1 : noise.GetSimplex(MIN_X+z, MIN_Z+x));
+                    double perlin2 = 4 * (noise.GetSimplex(MIN_X+z, MIN_Z+x) < 0 ? noise.GetSimplex(MIN_X+z, MIN_Z+x) * -1 : noise.GetSimplex(MIN_X+z, MIN_Z+x));
+                    double perlin3 = 5 * (noise.GetSimplex(MIN_X+z, MIN_Z+x) < 0 ? noise.GetSimplex(MIN_X+z, MIN_Z+x) * -1 : noise.GetSimplex(MIN_X+z, MIN_Z+x));
+
+                    int TERRAIN_HEIGHT = (int) Math.max(1, 5 * ((perlin1 + perlin2 + perlin3)) / 3f);
 
 
 
-                    //int TERRAIN_HEIGHT = 1;
+                    //int TERRAIN_HEIGHT = 5;
 
                     /*
                     if(y >= TERRAIN_HEIGHT -1 && x == CHUNK_LENGTH / 2 && z == CHUNK_WIDTH / 2){
@@ -180,23 +184,31 @@ public class Chunk implements Serializable{
 
                      */
                     if(blocksInChunk[x][y][z] != 0) continue;
-                    if(ThreadLocalRandom.current().nextInt(1,500) == 5 && y == TERRAIN_HEIGHT + 1){
+                    if(y < 5 && y > 1){
+                        blocksInChunk[x][y][z] = 7;
+                    }
+                    else if(ThreadLocalRandom.current().nextInt(1,300) == 5 && y == TERRAIN_HEIGHT + 1){
                         generateTree(x,y,z);
                     }
                     else if (y > TERRAIN_HEIGHT) {
                         blocksInChunk[x][y][z] = 0;
                     }
-                    else if(y == TERRAIN_HEIGHT){
+                    else if(y == TERRAIN_HEIGHT && blocksInChunk[x][y+1][0] == 0){
                         blocksInChunk[x][y][z] = 1;
-                    }else if(y == TERRAIN_HEIGHT - 1){
+                    }
+                    else if(y == TERRAIN_HEIGHT && blocksInChunk[x][y+1][0] != 0){
                         blocksInChunk[x][y][z] = 2;
-                    }else{
+                    }
+                    else if(y == TERRAIN_HEIGHT - 1){
+                        blocksInChunk[x][y][z] = 2;
+                    }
+                    else{
                         blocksInChunk[x][y][z] = 3;
                     }
 
 
                     if(TERRAIN_HEIGHT > maxBlockHeight){
-                        maxBlockHeight = TERRAIN_HEIGHT;
+                        maxBlockHeight = (int) TERRAIN_HEIGHT;
                     }
                 }
             }
@@ -208,12 +220,16 @@ public class Chunk implements Serializable{
 
     private void generateTree(int x, int y, int z) {
 
+        //Logs
+
         blocksInChunk[x][y][z] = 4;
         blocksInChunk[x][y+1][z] = 4;
         blocksInChunk[x][y+2][z] = 4;
         blocksInChunk[x][y+3][z] = 4;//LEAVES FROM THIS Y
         blocksInChunk[x][y+4][z] = 4;
         blocksInChunk[x][y+5][z] = 4;
+
+
 
         for(int xC = x-2; xC < x+3;xC++){
             for(int zC = z-2; zC < z+3;zC++){
@@ -222,15 +238,14 @@ public class Chunk implements Serializable{
                     try{
                         blocksInChunk[xC][yC][zC] = 5;
                     }catch (Exception ignore){
-
+                        Chunk chunk = World.getChunk(CHUNK_LENGTH + xC, CHUNK_WIDTH +zC);
+                        if(chunk != null && chunk.isLazy){
+                            chunk.setBlock(CHUNK_LENGTH + xC,yC, CHUNK_WIDTH +zC,OAK_LEAVES);
+                        }
                     }
                 }
             }
         }
-
-
-
-
 
     }
 
@@ -260,7 +275,9 @@ public class Chunk implements Serializable{
                         blockRenderer.render(block, new FACE[]{});
                         continue;
                     }
+                    int i =0;
 
+                    //Add top face is transparent
                     try {
                         if (isTransparent(blocksInChunk[x][y + 1][z])) {
                             facesToRender[0] = (FACE.TOP);
@@ -271,13 +288,11 @@ public class Chunk implements Serializable{
 
                     try {
                         if (isTransparent(blocksInChunk[x][y - 1][z])) {
-
-
                             facesToRender[1] = (BOTTOM);
                         }
                     } catch (ArrayIndexOutOfBoundsException ignore) {
 
-
+                        facesToRender[1] = (BOTTOM);
                     }
                     // MAX Z
                     try {

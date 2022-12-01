@@ -5,78 +5,37 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5620f92b-fa71-4757-89c7-2d7051864128" name="Changes" comment="Added Chunk Saving">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/nativess.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/blocks/impl/BlockCobbleStone.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/blocks/impl/BlockDirt.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/blocks/impl/BlockGlass.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/blocks/impl/BlockGrass.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/blocks/impl/BlockOakLeaves.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/blocks/impl/BlockOakLog.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/blocks/impl/BlockOakWood.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/blocks/impl/BlockSand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/blocks/impl/BlockStone.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/lwjgl_glfw.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/atlas.png" beforeDir="false" afterPath="$PROJECT_DIR$/res/atlas.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/crosshair.png" beforeDir="false" afterPath="$PROJECT_DIR$/res/crosshair.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/blocks/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/blocks/Block.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/blocks/BlockRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/blocks/BlockRenderer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/blocks/BlockTextureHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/blocks/BlockTextureHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/blocks/impl/BlockGrass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/blocks/impl/BlockGrass.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/engineTester/MainGameLoop.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/engineTester/MainGameLoop.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/entities/Camera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/entities/Camera.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/entities/ChunkEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/entities/ChunkEntity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/entities/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/entities/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/guis/GuiRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/guis/GuiRenderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/guis/guiFragmentShader.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/guis/guiFragmentShader.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/guis/guiVertexShader.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/guis/guiVertexShader.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/renderEngine/DisplayManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/renderEngine/DisplayManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/renderEngine/Loader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/renderEngine/Loader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/shaders/fragmentShader.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/shaders/fragmentShader.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/shaders/vertexShader.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/shaders/vertexShader.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/skybox/SkyboxRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/skybox/SkyboxRenderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/skybox/SkyboxShader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/skybox/SkyboxShader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/skybox/skyboxFragmentShader.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/skybox/skyboxFragmentShader.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/skybox/skyboxVertexShader.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/skybox/skyboxVertexShader.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/textures/ModelTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/textures/ModelTexture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/textures/TerrainTexture.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/textures/TerrainTexturePack.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/toolbox/Maths.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/toolbox/Maths.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/toolbox/MousePicker.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/toolbox/Vector.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/world/Location.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/world/Location.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/world/World.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/world/World.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/world/chunk/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/world/chunk/Chunk.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/world/chunk/ChunkMesh.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/world/worldgen/Noise.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/world/worldgen/Noise.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/blocks/Block$FACE.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/blocks/Block$FACE.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/blocks/Block$Material.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/blocks/Block$Material.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/blocks/Block.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/blocks/Block.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/blocks/BlockRenderer$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/blocks/BlockRenderer$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/blocks/BlockRenderer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/blocks/BlockRenderer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/blocks/BlockTextureHandler$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/blocks/BlockTextureHandler$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/blocks/BlockTextureHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/blocks/BlockTextureHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/blocks/impl/BlockGrass.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/blocks/impl/BlockGrass.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/engineTester/MainGameLoop.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/engineTester/MainGameLoop.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/entities/Camera.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/entities/Camera.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/entities/ChunkEntity.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/entities/ChunkEntity.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/entities/Player.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/entities/Player.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/guis/GuiRenderer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/guis/GuiRenderer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/renderEngine/Loader.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/renderEngine/Loader.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/skybox/SkyboxRenderer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/skybox/SkyboxShader.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/textures/ModelTexture.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/textures/ModelTexture.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/textures/TerrainTexture.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/textures/TerrainTexturePack.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/toolbox/Maths.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/toolbox/Maths.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/toolbox/MousePicker.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/toolbox/Vector.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/world/Location.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/world/Location.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/renderEngine/DisplayManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/renderEngine/DisplayManager.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/world/World$BlockComputer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/world/World$BlockComputer.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/world/World$BlockRenderer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/world/World$BlockRenderer.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/world/World$ChunkComputer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/world/World$ChunkComputer.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/world/World$ChunkLoadingDistributor.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/world/World$ChunkLoadingDistributor.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/world/World$ChunkSaver.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/world/World$ChunkSaver.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/world/World$ChunkUnloader.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/world/World$ChunkUnloader.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/world/World$ChunkUpdater.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/world/World$ChunkUpdater.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/world/World$MeshRenderer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/world/World$MeshRenderer.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/world/World.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/world/World.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/world/chunk/Chunk.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/world/chunk/Chunk.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/world/chunk/ChunkMesh.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/world/worldgen/Noise.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/world/worldgen/Noise.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -117,19 +76,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "last_opened_file_path": "C:/Users/hussa/Documents/Computer Science/Java/NewLucityPlugins/GunGame",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "discord-application"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/hussa/Documents/Computer Science/Java/NewLucityPlugins/GunGame&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="blocks" />

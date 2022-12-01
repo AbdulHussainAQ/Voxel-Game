@@ -11,6 +11,7 @@ import renderEngine.Loader;
 import world.chunk.Chunk;
 import world.worldgen.Noise;
 
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
@@ -33,9 +34,6 @@ public class World {
     private static ArrayBlockingQueue<Chunk> chunksToUnload;
 
     public static ArrayBlockingQueue<Chunk> chunksToUpdate;
-
-
-
 
     public static boolean done = false;
     public static boolean doneRendering;
@@ -67,7 +65,7 @@ public class World {
     private final ChunkUpdater chunkUpdater;
 
     @Getter
-    private static double seed;
+    private static int seed;
 
 
     public World(Player player, Entity[] entities, RawModelPool pool, Loader loader) {
@@ -75,7 +73,7 @@ public class World {
         World.player = player;
         World.entities = entities;
         this.rawModelPool = pool;
-        seed = ThreadLocalRandom.current().nextGaussian(Integer.MIN_VALUE, Integer.MAX_VALUE);
+        seed = ThreadLocalRandom.current().nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
         noise = new Noise(seed);
         chunksLoaded = new ConcurrentLinkedQueue<>();
         chunksToSave = new ArrayBlockingQueue<>(50000);
@@ -121,8 +119,8 @@ public class World {
         if(chunksToUpdate.size() > 0){
             chunkUpdater.run();
         }
-        //chunkLoader.run();
-        //chunkUnloader.run();
+        chunkLoader.run();
+        chunkUnloader.run();
     }
 
     public void update(){
@@ -177,6 +175,9 @@ public class World {
         }
         return false;
     }
+
+
+
 
 
 
@@ -243,15 +244,6 @@ public class World {
 
         @Override
         public void run() {
-
-                if(System.currentTimeMillis() - lastTime > 2000 && chunksToRender.size() == 0){
-                    try {
-                        Thread.sleep(60);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
 
                 if(System.currentTimeMillis() - lastTime > TIMEOUT){
 
@@ -328,15 +320,6 @@ public class World {
 
         @Override
         public void run() {
-
-                if(System.currentTimeMillis() - lastTime > 2000 && chunksToRender.size() == 0){
-                    try {
-                        Thread.sleep(80);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
 
                 if(System.currentTimeMillis() - lastTime > TIMEOUT){
                     Chunk chunk = chunksToCompute.poll();
@@ -421,7 +404,7 @@ public class World {
         private final long initialTime = System.currentTimeMillis();
         @Override
         public void run() {
-                    if (System.currentTimeMillis() - initialTime > INITIALTIMEOUT){
+                    if (doneRendering){
                         if(System.currentTimeMillis() - lastTime > TIMEOUT){
                             double minX = player.getMinXValue();
                             double minZ = player.getMinZValue();
@@ -435,7 +418,6 @@ public class World {
                                     if(chunk == null){
 
                                         Chunk chunk1 = new Chunk(noise, x, z);
-
 
                                         chunk1.lazyLoadSurroundingChunks();
                                         newChunks.add(chunk1);

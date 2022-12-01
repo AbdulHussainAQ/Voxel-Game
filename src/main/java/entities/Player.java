@@ -225,7 +225,7 @@ public class Player extends Entity {
                     for(double i = distance; i>=0;i--){
                         finalLoc.subtract(directionNormalized);
                         if(chunk.getBlock((int) Math.floor(finalLoc.x), (int) Math.floor(finalLoc.y), (int) Math.floor(finalLoc.z)) == 0){
-                            chunk.setBlock((int) Math.floor(finalLoc.x), (int) Math.floor(finalLoc.y), (int) Math.floor(finalLoc.z), Block.Material.SAND);
+                            chunk.setBlock((int) Math.floor(finalLoc.x), (int) Math.floor(finalLoc.y), (int) Math.floor(finalLoc.z), Block.Material.GRASS);
                             World.chunksToUpdate.add(chunk);
                             break;
                         }

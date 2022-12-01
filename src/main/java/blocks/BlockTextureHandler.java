@@ -46,6 +46,7 @@ public class BlockTextureHandler {
                 case OAK_LEAVES -> setFaces(BlockOakLeaves.UV_FRONT, BlockOakLeaves.UV_BACK, BlockOakLeaves.UV_TOP, BlockOakLeaves.UV_BOTTOM,
                         BlockOakLeaves.UV_LEFT, BlockOakLeaves.UV_RIGHT);
                 case SAND -> setFaces(BlockSand.UV_FRONT, BlockSand.UV_BACK, BlockSand.UV_TOP, BlockSand.UV_BOTTOM, BlockSand.UV_LEFT, BlockSand.UV_RIGHT);
+                case WATER ->setFaces(BlockWater.UV_FRONT, BlockWater.UV_BACK, BlockWater.UV_TOP, BlockWater.UV_BOTTOM, BlockWater.UV_LEFT, BlockWater.UV_RIGHT);
             }
         }
 

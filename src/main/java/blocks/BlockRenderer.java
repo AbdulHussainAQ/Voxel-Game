@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import textures.ModelTexture;
 import world.Location;
 import world.World;
+import blocks.Block.FACE;
 import world.chunk.Chunk;
 
 import java.io.Serializable;
@@ -111,19 +112,11 @@ public class BlockRenderer implements Serializable {
 
 
 
-    public synchronized void render(Block block, Block.FACE @NotNull [] faces){
+    public synchronized void render(Block block, Block.FACE @NotNull [] blockfaces){
         int integer;
-        for(Block.FACE face : faces){
+        for(Block.FACE face : blockfaces){
             if(face == null)continue;
             switch (face){
-                case TOP -> {
-                    integer = 1;
-                    positionss[1][0] = 1;
-                    for(float position : TOPFACE){
-                        positionss[1][integer++] = position;
-                    }
-                    positionsLength+=12;
-                }
                 case BOTTOM -> {
                     integer = 1;
                     positionss[0][0] = 1;
@@ -132,6 +125,31 @@ public class BlockRenderer implements Serializable {
                     }
                     positionsLength+=12;
                 }
+                case TOP -> {
+                    integer = 1;
+                    positionss[1][0] = 1;
+                    for(float position : TOPFACE){
+                        positionss[1][integer++] = position;
+                    }
+                    positionsLength+=12;
+                }
+                case BACK -> {
+                    integer = 1;
+                    positionss[2][0] = 1;
+                    for(float position : BACKFACE){
+                        positionss[2][integer++] = position;
+                    }
+                    positionsLength+=12;
+                }
+                case FRONT -> {
+                    integer = 1;
+                    positionss[3][0] = 1;
+                    for(float position : FRONTFACE){
+                        positionss[3][integer++] = position;
+                    }
+                    positionsLength+=12;
+                }
+
                 case LEFT -> {
                     integer = 1;
                     positionss[4][0] = 1;
@@ -148,28 +166,16 @@ public class BlockRenderer implements Serializable {
                     }
                     positionsLength+=12;
                 }
-                case FRONT -> {
-                    integer = 1;
-                    positionss[3][0] = 1;
-                    for(float position : FRONTFACE){
-                        positionss[3][integer++] = position;
-                    }
-                    positionsLength+=12;
-                }
-                case BACK -> {
-                    integer = 1;
-                    positionss[2][0] = 1;
-                    for(float position : BACKFACE){
-                        positionss[2][integer++] = position;
-                    }
-                    positionsLength+=12;
-                }
+
+
             }
         }
 
-        block.setIndices(generateIndices(faces.length));
+        block.setIndices(generateIndices(blockfaces.length));
         block.setPositions(positionss);
-        textureCoords(faces, block);
+
+        textureCoords(blockfaces, block);
+        
 
 
         blocks[index] = block;
@@ -208,6 +214,10 @@ public class BlockRenderer implements Serializable {
                 for (int vertex = 1; vertex < face.length; vertex++) {
 
                     switch (vertex % 3){
+                        case 0 ->{
+                            positions[index[1]] = (face[vertex] + zincrement);
+                            index[1]++;
+                        }
                         case 1 ->{
                             positions[index[1]] = (face[vertex] + xincrement);
                             index[1]++;
@@ -216,10 +226,7 @@ public class BlockRenderer implements Serializable {
                             positions[index[1]] = (face[vertex] + yincrement);
                             index[1]++;
                         }
-                        case 0 ->{
-                            positions[index[1]] = (face[vertex] + zincrement);
-                            index[1]++;
-                        }
+
                     }
                 }
             }
@@ -263,26 +270,28 @@ public class BlockRenderer implements Serializable {
 
     }
 
-
+    private static final BlockTextureHandler textureHandler = new BlockTextureHandler();
 
     @Contract(pure = true)
     public synchronized void textureCoords(Block.FACE[] faces, Block block){
 
-        if(block == null)return;
+        if(block == null || faces.length == 0)return;
 
         Block.Material material = block.getMaterial();
-        BlockTextureHandler textureHandler = new BlockTextureHandler();
+
         textureHandler.setType(material);
         LinkedList<Float> coords = new LinkedList<>();
-        for(Block.FACE face : faces){
+        for(FACE face : faces){
             if(face == null)continue;
             switch (face){
+                case BOTTOM -> coords.addAll(textureHandler.bottomFace);
                 case TOP -> coords.addAll(textureHandler.topFace);
                 case BACK -> coords.addAll(textureHandler.backFace);
+                case FRONT -> coords.addAll(textureHandler.frontFace);
                 case LEFT -> coords.addAll(textureHandler.leftFace);
                 case RIGHT -> coords.addAll(textureHandler.rightFace);
-                case FRONT -> coords.addAll(textureHandler.frontFace);
-                case BOTTOM -> coords.addAll(textureHandler.bottomFace);
+
+
             }
         }
         textureCoordsList.addAll(coords);
